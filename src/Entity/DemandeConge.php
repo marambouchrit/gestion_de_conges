@@ -30,6 +30,9 @@ class DemandeConge
     #[ORM\JoinColumn(name: "id_user", referencedColumnName: "id")]
     private ?Utilisateur $utilisateur = null;
 
+    #[ORM\Column(length: 255)]
+    private ?string $typeConge = null;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -86,6 +89,18 @@ class DemandeConge
     public function setUtilisateur(?Utilisateur $utilisateur): static
     {
         $this->utilisateur = $utilisateur;
+        return $this;
+    }
+
+    public function getTypeConge(): ?string
+    {
+        return $this->typeConge;
+    }
+
+    public function setTypeConge(string $typeConge): static
+    {
+        $this->typeConge = $typeConge;
+
         return $this;
     }
 }

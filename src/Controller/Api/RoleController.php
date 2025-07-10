@@ -107,4 +107,5 @@ class RoleController extends AbstractController
 
         return $this->json(['message' => 'Rôle supprimé']);
     }
+   
 }

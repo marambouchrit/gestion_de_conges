@@ -122,4 +122,11 @@ class SoldeCongeController extends AbstractController
 
         return $this->json(['message' => 'Solde de congé supprimé']);
     }
+   public function calculerJoursDisponibles(): int
+{
+    $total = $this->nb_jours_total ?? 0; 
+    $pris = $this->nb_jours_pris ?? 0; 
+
+    return max(0, $total - $pris);
+}
 }

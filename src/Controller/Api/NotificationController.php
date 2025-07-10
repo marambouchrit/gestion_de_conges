@@ -103,4 +103,8 @@ class NotificationController extends AbstractController
 
         return $this->json(['message' => 'Notification supprimée']);
     }
+    public function afficherNotification(): string
+{
+    return $this->message ?? '';
+}
 }

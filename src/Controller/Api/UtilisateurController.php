@@ -113,5 +113,16 @@ public function delete(
 
     return $this->json(['message' => 'Utilisateur supprimé']);
 }
-
+public function consulterDemandes(): array
+{
+    return $this->demandesConge->toArray();
+}
+public function consulterSolde(): ?SoldeConge
+{
+    return $this->soldeConge;
+}
+public function recevoirNotification(Notification $notification): void
+{
+    $this->notifications[] = $notification;
+}
 }

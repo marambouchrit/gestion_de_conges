@@ -4,9 +4,11 @@ namespace App\Entity;
 
 use App\Repository\UtilisateurRepository;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Security\Core\User\UserInterface;
+use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 
 #[ORM\Entity(repositoryClass: UtilisateurRepository::class)]
-class Utilisateur
+class Utilisateur implements UserInterface, PasswordAuthenticatedUserInterface
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
@@ -19,13 +21,12 @@ class Utilisateur
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $prenom = null;
 
-    #[ORM\Column(length: 255)]
+    #[ORM\Column(length: 255, unique: true)]
     private ?string $email = null;
 
-    #[ORM\Column(length: 255, nullable: true)]
+    #[ORM\Column(length: 255)]
     private ?string $mot_de_passe = null;
 
-   
     #[ORM\ManyToOne(targetEntity: Role::class)]
     #[ORM\JoinColumn(name: "id_role", referencedColumnName: "id")]
     private ?Role $role = null;
@@ -33,6 +34,8 @@ class Utilisateur
     #[ORM\ManyToOne(targetEntity: Departement::class)]
     #[ORM\JoinColumn(name: "id_departement", referencedColumnName: "id")]
     private ?Departement $departement = null;
+
+    // === GETTERS / SETTERS ===
 
     public function getId(): ?int { return $this->id; }
 
@@ -52,26 +55,42 @@ class Utilisateur
 
     public function setMotDePasse(?string $mot_de_passe): static { $this->mot_de_passe = $mot_de_passe; return $this; }
 
+    public function getRole(): ?Role { return $this->role; }
 
-    public function getRole(): ?Role
+    public function setRole(?Role $role): static { $this->role = $role; return $this; }
+
+    public function getDepartement(): ?Departement { return $this->departement; }
+
+    public function setDepartement(?Departement $departement): static { $this->departement = $departement; return $this; }
+
+    // === OBLIGATOIRE POUR UserInterface ===
+
+    public function getRoles(): array
     {
-        return $this->role;
+        return [$this->role ? $this->role->getNomRole() : 'ROLE_USER'];
     }
 
-    public function setRole(?Role $role): static
+    // Méthode obligatoire de PasswordAuthenticatedUserInterface
+    public function getPassword(): ?string
     {
-        $this->role = $role;
-        return $this;
+        return $this->mot_de_passe;
     }
 
-    public function getDepartement(): ?Departement
+    // Méthode obligatoire de UserInterface depuis Symfony 5.3
+    public function getUserIdentifier(): string
     {
-        return $this->departement;
+        return $this->email ?? '';
     }
 
-    public function setDepartement(?Departement $departement): static
+    // Pour compatibilité, retourne l’identifiant utilisateur (ancienne méthode)
+    public function getUsername(): string
     {
-        $this->departement = $departement;
-        return $this;
+        return $this->getUserIdentifier();
     }
+
+    
+    public function eraseCredentials(): void
+    {
+        
+}
 }
